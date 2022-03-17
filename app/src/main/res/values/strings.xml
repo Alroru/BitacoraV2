@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">BitacoraApp</string>
+    <string name="txtEditandoFrase" />
+    <string name="txtHintFecha">Fecha</string>
+    <string name="txtHintComentario">Comentario</string>
+    <string name="txtBtnGuardar">Guardar</string>
+    <string name="txtBtnCancelar">Cancelar</string>
+    <string name="txtHintNombre">Nombre  del cuaderno</string>
+    <string name="volver">Volver</string>
+    <string name="borrarCuaderno">Borrar Cuaderno</string>
+
+</resources>
