@@ -17,16 +17,19 @@ import java.util.List;
 
 import es.studium.bitacoraapp.Modelo.Cuaderno;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener,DialogoAltaCuaderno {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener,DialogoAltaCuaderno,DialogoModificarCuaderno {
     FloatingActionButton boton;
     RecyclerView recyclerView;
     CuadernoAdapter cuadernoAdapter;
     LinearLayoutManager lManager;
     ConsultaCuadernoRemota consultaCuadernoRemota;
     AltaCuadernoRemota altaCuadernoRemota;
+    ModificacionCuadernoRemota modificacionCuadernoRemota;
     List<Cuaderno>listaCuaderno;
     int id;
     String nuevoCuaderno;
+    String nombreCuaderno1;
+    String id1;
 
 
     @Override
@@ -61,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(View view, int position) {
                 // Pasar a la actividad Main2.java
                id = listaCuaderno.get(position).getIdCuaderno();
+
                 //Toast.makeText(MainActivity.this, ""+id, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(MainActivity.this,
                         MainActivity2.class);
@@ -70,30 +74,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             @Override // Un toque largo
             public void onLongClick(View view, int position) {
-                /*
-                final FraseFamosa fraseParaEliminar = listaDeFrases.get(position);
-                AlertDialog dialog = new AlertDialog
-                        .Builder(MainActivity.this)
-                        .setPositiveButton("Sí, eliminar",
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        frasesController.eliminarFrase(fraseParaEliminar);
-                                        refrescarListaDeFrases();
-                                    }
-                                })
-                        .setNegativeButton("Cancelar",
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                })
-                        .setTitle("Confirmar")
-                        .setMessage("¿Eliminar la frase " +
-                                fraseParaEliminar.getTexto() + "?")
-                        .create();
-                dialog.show();*/
+                id = listaCuaderno.get(position).getIdCuaderno();
+                nombreCuaderno1=listaCuaderno.get(position).getNombreCuaderno();
+               ModificarCuaderno modificarCuaderno =new ModificarCuaderno();
+               modificarCuaderno.setCancelable(false);
+               modificarCuaderno.show(getSupportFragmentManager(),"Dime el nombre");
                 Toast.makeText(MainActivity.this, "toque largo", Toast.LENGTH_SHORT).show();
             }
         }));
@@ -127,7 +112,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onDataSet(String nombreCuaderno) {
+    public void onDataSetModificar(String nombreCuaderno) {
+        nuevoCuaderno=nombreCuaderno;
+        Toast.makeText(this, ""+nuevoCuaderno, Toast.LENGTH_SHORT).show();
+        id1=""+id;
+        modificacionCuadernoRemota=new ModificacionCuadernoRemota(id1,nuevoCuaderno);
+        modificacionCuadernoRemota.execute();
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        consultaCuadernoRemota =new ConsultaCuadernoRemota();
+        consultaCuadernoRemota.execute();
+        listaCuaderno=consultaCuadernoRemota.getLista();
+        Toast.makeText(this, "listaCuadernosize"+consultaCuadernoRemota.getLista().size(), Toast.LENGTH_SHORT).show();
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        cuadernoAdapter=new CuadernoAdapter(consultaCuadernoRemota.getLista());
+        recyclerView.setAdapter(cuadernoAdapter);
+
+
+
+    }
+
+    @Override
+    public void onDataSetAlta(String nombreCuaderno) {
         nuevoCuaderno=nombreCuaderno;
         altaCuadernoRemota=new AltaCuadernoRemota(nombreCuaderno);
         altaCuadernoRemota.execute();

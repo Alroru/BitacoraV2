@@ -14,9 +14,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-public class AgregarCuaderno extends DialogFragment {
-    DialogoAltaCuaderno dialogoAltaCuaderno;
-    EditText altaCuaderno;
+public class ModificarCuaderno extends DialogFragment {
+    DialogoModificarCuaderno dialogoModificarCuaderno;
+    EditText modificarCuaderno;
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -25,24 +25,24 @@ public class AgregarCuaderno extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         builder.setView(inflater.inflate(R.layout.dialogo_cuaderno, null));
         View Myview=inflater.inflate(R.layout.dialogo_cuaderno,null);
-        altaCuaderno=Myview.findViewById(R.id.etEditarNombre);
+        modificarCuaderno=Myview.findViewById(R.id.etEditarNombre);
         builder.setView(Myview);
 
-        builder.setTitle("Crea un nuevo Cuaderno");
-        builder.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
+        builder.setTitle("Da un nuevo nombre al Cuaderno");
+        builder.setPositiveButton("Modificar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 try
                 {
-                    dialogoAltaCuaderno.onDataSetAlta(altaCuaderno.getText().toString());
+                    dialogoModificarCuaderno.onDataSetModificar(modificarCuaderno.getText().toString());
                 }
                 catch (Exception e)
                 {
                     Toast.makeText(getActivity(),e.getMessage(),Toast.LENGTH_SHORT).show();
                 }
-                Toast.makeText(getActivity(), "Guardado", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Modificado", Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
-                dialogoAltaCuaderno.onDialogoGuardarListener();
+                dialogoModificarCuaderno.onDialogoGuardarListener();
             }
         });
         builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -50,7 +50,7 @@ public class AgregarCuaderno extends DialogFragment {
             public void onClick(DialogInterface dialog, int which) {
                 //Cerrar el diálogo simplemente
                 dialog.dismiss();
-                dialogoAltaCuaderno.onDialogoCancelarListener();
+                dialogoModificarCuaderno.onDialogoCancelarListener();
             }
         });
 //Cerrar el objeto y devolverlo
@@ -63,7 +63,7 @@ public class AgregarCuaderno extends DialogFragment {
         //Verificamos que la actividad principal ha implementado el interfaz
         try {
             //Instanciamos OnDialogoNombreListener para poder enviar eventos a la clase principal
-            dialogoAltaCuaderno = (DialogoAltaCuaderno) context;
+            dialogoModificarCuaderno = (DialogoModificarCuaderno)  context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + "debe implementar interfaz dialogo");

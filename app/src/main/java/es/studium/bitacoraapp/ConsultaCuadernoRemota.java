@@ -29,6 +29,9 @@ public class ConsultaCuadernoRemota extends AsyncTask<Void, Void, String> {
     Cuaderno c;
     JSONArray result;
     JSONObject jsonobject;
+
+
+
     // Constructor
     public ConsultaCuadernoRemota()
     {
@@ -40,7 +43,7 @@ public class ConsultaCuadernoRemota extends AsyncTask<Void, Void, String> {
     protected String doInBackground(Void... voids) {
         try{
             // Crear la URL de conexión al API
-            URL url = new URL("http://192.168.1.135/ApiRest/cuadernos.php");
+            URL url = new URL("http://192.168.1.135/ApiRest/cuadernos.php?");
             // Crear la conexión HTTP
             HttpURLConnection myConnection = (HttpURLConnection) url.openConnection();
             // Establecer método de comunicación. Por defecto GET.
