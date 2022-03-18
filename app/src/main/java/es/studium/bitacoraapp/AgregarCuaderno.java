@@ -27,6 +27,7 @@ public class AgregarCuaderno extends DialogFragment {
         View Myview=inflater.inflate(R.layout.dialogo_cuaderno,null);
         altaCuaderno=Myview.findViewById(R.id.etEditarNombre);
         builder.setView(Myview);
+
         builder.setTitle("Crea un nuevo Cuaderno");
         builder.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
             @Override

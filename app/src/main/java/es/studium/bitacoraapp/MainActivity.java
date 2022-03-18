@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     CuadernoAdapter cuadernoAdapter;
     LinearLayoutManager lManager;
     ConsultaCuadernoRemota consultaCuadernoRemota;
+    AltaCuadernoRemota altaCuadernoRemota;
     List<Cuaderno>listaCuaderno;
     int id;
     String nuevoCuaderno;
@@ -128,6 +129,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onDataSet(String nombreCuaderno) {
         nuevoCuaderno=nombreCuaderno;
+        altaCuadernoRemota=new AltaCuadernoRemota(nombreCuaderno);
+        altaCuadernoRemota.execute();
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        consultaCuadernoRemota =new ConsultaCuadernoRemota();
+        consultaCuadernoRemota.execute();
+        listaCuaderno=consultaCuadernoRemota.getLista();
+        Toast.makeText(this, "listaCuadernosize"+consultaCuadernoRemota.getLista().size(), Toast.LENGTH_SHORT).show();
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        cuadernoAdapter=new CuadernoAdapter(consultaCuadernoRemota.getLista());
+        recyclerView.setAdapter(cuadernoAdapter);
 
 
 

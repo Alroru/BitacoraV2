@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Alejandro/AndroidStudioProjects/Bitacora/app/src/main/res/drawable/background.xml" value="0.193" />
+        <entry key="..\:/Users/Alejandro/AndroidStudioProjects/Bitacora/app/src/main/res/layout/activity_main.xml" value="0.23229166666666667" />
         <entry key="..\:/Users/Alejandro/AndroidStudioProjects/Bitacora/app/src/main/res/layout/activity_main2.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Alejandro/AndroidStudioProjects/Bitacora/app/src/main/res/layout/dialogo_apuntes.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Alejandro/AndroidStudioProjects/Bitacora/app/src/main/res/layout/dialogo_cuaderno.xml" value="0.25416666666666665" />
