@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -25,8 +26,8 @@ public class MainActivity2 extends AppCompatActivity implements View.OnClickList
     ApunteAdapter apunteAdapter;
     LinearLayoutManager lManager;
     ConsultaApunteRemota consultaApunteRemota;
-    List<Apunte>listaApunte;
-
+    BajaCuadernoRemota bajaCuadernoRemota;
+    List<Apunte> listaApunte;
 
 
     @Override
@@ -36,36 +37,50 @@ public class MainActivity2 extends AppCompatActivity implements View.OnClickList
 
         Bundle parametros = this.getIntent().getExtras();
         idCuadernoFK = parametros.getInt("idCuadernoFK");
-        Toast.makeText(this, ""+idCuadernoFK, Toast.LENGTH_SHORT).show();
-        borrarCuaderno=findViewById(R.id.buttonBorrarCuaderno);
-        boton=findViewById(R.id.floatingActionButtonMain2);
-        recyclerView2=findViewById(R.id.recyclerViewApuntes);
+        Toast.makeText(this, "" + idCuadernoFK, Toast.LENGTH_SHORT).show();
+        borrarCuaderno = findViewById(R.id.buttonBorrarCuaderno);
+        boton = findViewById(R.id.floatingActionButtonMain2);
+        recyclerView2 = findViewById(R.id.recyclerViewApuntes);
         recyclerView2.setHasFixedSize(true);
         lManager = new LinearLayoutManager(this);
         recyclerView2.setLayoutManager(lManager);
         consultaApunteRemota = new ConsultaApunteRemota(idCuadernoFK);
         consultaApunteRemota.execute();
-        listaApunte=consultaApunteRemota.getLista();
-        Toast.makeText(this, "apuntes"+consultaApunteRemota.getLista().size(), Toast.LENGTH_SHORT).show();
+        listaApunte = consultaApunteRemota.getLista();
+        Toast.makeText(this, "apuntes" + consultaApunteRemota.getLista().size(), Toast.LENGTH_SHORT).show();
 
         try {
             Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        apunteAdapter=new ApunteAdapter(consultaApunteRemota.getLista());
+        apunteAdapter = new ApunteAdapter(consultaApunteRemota.getLista());
         recyclerView2.setAdapter(apunteAdapter);
 
 
         borrarCuaderno.setOnClickListener(this);
 
-        }
+    }
 
     @Override
     public void onClick(View view) {
-        if(view.equals(borrarCuaderno))
-        {
-            Toast.makeText(this, "Boton de borrar", Toast.LENGTH_SHORT).show();
+        if (view.equals(borrarCuaderno)) {
+            if (listaApunte.size() == 0) {
+                String id = "" + idCuadernoFK;
+                bajaCuadernoRemota = new BajaCuadernoRemota(id);
+                bajaCuadernoRemota.execute();
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Toast.makeText(this, "Borrado", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity2.this,
+                        MainActivity.class);
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "Cuaderno LLeno", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }
