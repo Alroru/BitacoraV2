@@ -18,7 +18,7 @@ import java.util.List;
 import es.studium.bitacoraapp.Modelo.Apunte;
 import es.studium.bitacoraapp.Modelo.Cuaderno;
 
-public class MainActivity2 extends AppCompatActivity implements View.OnClickListener, DialogoEliminarCuaderno {
+public class MainActivity2 extends AppCompatActivity implements View.OnClickListener, DialogoEliminarCuaderno,DialogoAltaApunte {
     int idCuadernoFK;
     Button borrarCuaderno;
     FloatingActionButton boton;
@@ -27,9 +27,14 @@ public class MainActivity2 extends AppCompatActivity implements View.OnClickList
     LinearLayoutManager lManager;
     ConsultaApunteRemota consultaApunteRemota;
     BajaCuadernoRemota bajaCuadernoRemota;
+    AltaApunteRemota altaApunteRemota;
     List<Apunte> listaApunte;
     Boolean seguro;
     EliminarCuaderno eliminarCuaderno;
+    AgregarApunte agregarApunte;
+    int id;
+    String textoApunte;
+    String fechaApunte;
 
 
     @Override
@@ -61,8 +66,27 @@ public class MainActivity2 extends AppCompatActivity implements View.OnClickList
 
 
         borrarCuaderno.setOnClickListener(this);
+        boton.setOnClickListener(this);
+        recyclerView2.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(),
+                recyclerView2, new RecyclerTouchListener.ClickListener() {
+            @Override // Un toque sencillo
+            public void onClick(View view, int position) {
+                // Pasar a la actividad Main2.java
+                id = listaApunte.get(position).getIdApunte();
+                Toast.makeText(MainActivity2.this, "toque corto"+id, Toast.LENGTH_SHORT).show();
 
+
+            }
+            @Override // Un toque largo
+            public void onLongClick(View view, int position) {
+                id = listaApunte.get(position).getIdApunte();
+
+                Toast.makeText(MainActivity2.this, "toque largo"+id, Toast.LENGTH_SHORT).show();
+            }
+        }));
     }
+
+
 
     @Override
     public void onClick(View view) {
@@ -70,6 +94,12 @@ public class MainActivity2 extends AppCompatActivity implements View.OnClickList
             eliminarCuaderno=new EliminarCuaderno();
             eliminarCuaderno.setCancelable(false);
             eliminarCuaderno.show(getSupportFragmentManager(),"Eliminar");
+        }
+        else if (view.equals(boton))
+        {
+            agregarApunte=new AgregarApunte();
+            agregarApunte.setCancelable(false);
+            agregarApunte.show(getSupportFragmentManager(),"Agregar");
         }
     }
 
@@ -80,6 +110,34 @@ public class MainActivity2 extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onDialogoCancelarListener() {
+
+    }
+
+    @Override
+    public void onDataSetAltaApunte(String comentarioApunte, String fechaApunte) {
+        textoApunte=comentarioApunte;
+        this.fechaApunte=fechaApunte;
+        String idFK=""+idCuadernoFK;
+        altaApunteRemota=new AltaApunteRemota(fechaApunte,textoApunte,idFK);
+        altaApunteRemota.execute();
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        consultaApunteRemota = new ConsultaApunteRemota(idCuadernoFK);
+        consultaApunteRemota.execute();
+        listaApunte = consultaApunteRemota.getLista();
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        apunteAdapter = new ApunteAdapter(consultaApunteRemota.getLista());
+        recyclerView2.setAdapter(apunteAdapter);
+
+
 
     }
 
