@@ -37,6 +37,8 @@ public class ConsultaCuadernoRemota extends AsyncTask<Void, Void, String> {
     {
 
     }
+
+
     // Inspectores
 
     @Override

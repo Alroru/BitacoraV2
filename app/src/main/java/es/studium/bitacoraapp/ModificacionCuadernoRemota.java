@@ -6,8 +6,11 @@ import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
+import java.net.URLEncoder;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -16,58 +19,33 @@ public class ModificacionCuadernoRemota extends AsyncTask<Void, Void, String>
     // Atributos
     String idCuaderno;
     String nombreCuaderno;
-
     // Constructor
     public ModificacionCuadernoRemota(String id,String nombre)
     {
         this.idCuaderno = id;
-        this.nombreCuaderno = nombre;
-
+        this.nombreCuaderno=nombre;
     }
     // Inspectores
 
+    @Override
     protected String doInBackground(Void... voids)
     {
         try
         {
-            String response = "";
-            Uri uri = new Uri.Builder()
-                    .scheme("http")
-                    .authority("192.168.1.135")
-                    .path("/ApiRest/cuadernos.php")
-                    .appendQueryParameter("idCuaderno", this.idCuaderno)
-                    .appendQueryParameter("nombreCuaderno", this.nombreCuaderno)
-
-                    .build();
+// Crear la URL de conexión al API
+            URI baseUri = new URI("http://192.168.1.135/ApiRest/cuadernos.php");
+            String[] parametros = {"idCuaderno",this.idCuaderno,
+            "nombreCuaderno",this.nombreCuaderno};
+            URI uri = applyParameters(baseUri, parametros);
 // Create connection
-            URL url = new URL(uri.toString());
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setReadTimeout(15000);
-            connection.setConnectTimeout(15000);
-            connection.setRequestMethod("PUT");
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-            int responseCode=connection.getResponseCode();
-            if (responseCode == HttpsURLConnection.HTTP_OK)
+            HttpURLConnection myConnection = (HttpURLConnection)
+                    uri.toURL().openConnection();
+// Establecer método. Por defecto GET.
+            myConnection.setRequestMethod("PUT");
+            if (myConnection.getResponseCode() == 200)
             {
-                String line;
-                BufferedReader br=new BufferedReader(new
-                        InputStreamReader(connection.getInputStream()));
-                while ((line=br.readLine()) != null)
-                {
-                    response+=line;
-                }
-            }
-            else
-            {
-                response="";
-            }
-            connection.getResponseCode();
-            if (connection.getResponseCode() == 200)
-            {
-// Success
-                Log.println(Log.ASSERT,"Resultado", "Registro modificado:"+response);
-                connection.disconnect();
+                Log.println(Log.ASSERT,"Resultado", "Registro Modificado");
+                myConnection.disconnect();
             }
             else
             {
@@ -81,9 +59,44 @@ public class ModificacionCuadernoRemota extends AsyncTask<Void, Void, String>
         }
         return null;
     }
-    protected void onPostExecute(String mensaje)
-    {
 
+    URI applyParameters(URI uri, String[] urlParameters)
+    {
+        StringBuilder query = new StringBuilder();
+        boolean first = true;
+        for (int i = 0; i < urlParameters.length; i += 2)
+        {
+            if (first)
+            {
+                first = false;
+            }
+            else
+            {
+                query.append("&");
+            }
+            try
+            {
+                query.append(urlParameters[i]).append("=")
+                        .append(URLEncoder.encode(urlParameters[i + 1], "UTF-8"));
+            }
+            catch (UnsupportedEncodingException ex)
+            {
+                /* As URLEncoder are always correct, this exception
+                 * should never be thrown. */
+                throw new RuntimeException(ex);
+            }
+        }
+        try
+        {
+            return new URI(uri.getScheme(), uri.getAuthority(),
+                    uri.getPath(), query.toString(), null);
+        }
+        catch (Exception ex)
+        {
+            /* As baseUri and query are correct, this exception
+             * should never be thrown. */
+            throw new RuntimeException(ex);
+        }
     }
 }
 

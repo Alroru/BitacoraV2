@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     List<Cuaderno>listaCuaderno;
     int id;
     String nuevoCuaderno;
-    String nombreCuaderno1;
+
     String id1;
 
 
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override // Un toque largo
             public void onLongClick(View view, int position) {
                 id = listaCuaderno.get(position).getIdCuaderno();
-                nombreCuaderno1=listaCuaderno.get(position).getNombreCuaderno();
+
                ModificarCuaderno modificarCuaderno =new ModificarCuaderno();
                modificarCuaderno.setCancelable(false);
                modificarCuaderno.show(getSupportFragmentManager(),"Dime el nombre");
@@ -113,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onDataSetModificar(String nombreCuaderno) {
+
         nuevoCuaderno=nombreCuaderno;
         Toast.makeText(this, ""+nuevoCuaderno, Toast.LENGTH_SHORT).show();
         id1=""+id;
