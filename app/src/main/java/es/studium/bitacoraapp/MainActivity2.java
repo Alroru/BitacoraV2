@@ -18,7 +18,7 @@ import java.util.List;
 import es.studium.bitacoraapp.Modelo.Apunte;
 import es.studium.bitacoraapp.Modelo.Cuaderno;
 
-public class MainActivity2 extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity2 extends AppCompatActivity implements View.OnClickListener, DialogoEliminarCuaderno {
     int idCuadernoFK;
     Button borrarCuaderno;
     FloatingActionButton boton;
@@ -28,6 +28,8 @@ public class MainActivity2 extends AppCompatActivity implements View.OnClickList
     ConsultaApunteRemota consultaApunteRemota;
     BajaCuadernoRemota bajaCuadernoRemota;
     List<Apunte> listaApunte;
+    Boolean seguro;
+    EliminarCuaderno eliminarCuaderno;
 
 
     @Override
@@ -65,6 +67,27 @@ public class MainActivity2 extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View view) {
         if (view.equals(borrarCuaderno)) {
+            eliminarCuaderno=new EliminarCuaderno();
+            eliminarCuaderno.setCancelable(false);
+            eliminarCuaderno.show(getSupportFragmentManager(),"Eliminar");
+        }
+    }
+
+    @Override
+    public void onDialogoGuardarListener() {
+
+    }
+
+    @Override
+    public void onDialogoCancelarListener() {
+
+    }
+
+    @Override
+    public void onDataSetEliminar(boolean seguro) {
+        this.seguro=seguro;
+        if(seguro)
+        {
             if (listaApunte.size() == 0) {
                 String id = "" + idCuadernoFK;
                 bajaCuadernoRemota = new BajaCuadernoRemota(id);
@@ -82,5 +105,7 @@ public class MainActivity2 extends AppCompatActivity implements View.OnClickList
                 Toast.makeText(this, "Cuaderno LLeno", Toast.LENGTH_SHORT).show();
             }
         }
+        }
+
     }
-}
+

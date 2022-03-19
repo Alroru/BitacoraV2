@@ -1,0 +1,72 @@
+package es.studium.bitacoraapp;
+
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+
+public class EliminarCuaderno extends DialogFragment {
+    DialogoEliminarCuaderno dialogoEliminarCuaderno;
+    boolean seguro=true;
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+//Construir el diálogo
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        builder.setView(inflater.inflate(R.layout.dialogo_borrado, null));
+        builder.setTitle("¿Estás Seguro?");
+        builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                try
+                {
+                    dialogoEliminarCuaderno.onDataSetEliminar(seguro);
+                }
+                catch (Exception e)
+                {
+                    Toast.makeText(getActivity(),e.getMessage(),Toast.LENGTH_SHORT).show();
+                }
+                Toast.makeText(getActivity(), "Guardado", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+                dialogoEliminarCuaderno.onDialogoGuardarListener();
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //Cerrar el diálogo simplemente
+                dialog.dismiss();
+                dialogoEliminarCuaderno.onDialogoCancelarListener();
+            }
+        });
+//Cerrar el objeto y devolverlo
+        return builder.create();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        //Verificamos que la actividad principal ha implementado el interfaz
+        try {
+            //Instanciamos OnDialogoNombreListener para poder enviar eventos a la clase principal
+            dialogoEliminarCuaderno = (DialogoEliminarCuaderno)  context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + "debe implementar interfaz dialogo");
+
+        }
+
+    }
+
+
+}
