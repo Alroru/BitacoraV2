@@ -18,7 +18,7 @@ import java.util.List;
 import es.studium.bitacoraapp.Modelo.Apunte;
 import es.studium.bitacoraapp.Modelo.Cuaderno;
 
-public class MainActivity2 extends AppCompatActivity implements View.OnClickListener, DialogoEliminarCuaderno,DialogoAltaApunte {
+public class MainActivity2 extends AppCompatActivity implements View.OnClickListener,DialogoEliminarApunte, DialogoEliminarCuaderno,DialogoAltaApunte {
     int idCuadernoFK;
     Button borrarCuaderno;
     FloatingActionButton boton;
@@ -28,10 +28,12 @@ public class MainActivity2 extends AppCompatActivity implements View.OnClickList
     ConsultaApunteRemota consultaApunteRemota;
     BajaCuadernoRemota bajaCuadernoRemota;
     AltaApunteRemota altaApunteRemota;
+    BajaApunteRemota bajaApunteRemota;
     List<Apunte> listaApunte;
     Boolean seguro;
     EliminarCuaderno eliminarCuaderno;
     AgregarApunte agregarApunte;
+    EliminarApunte eliminarApunte;
     int id;
     String textoApunte;
     String fechaApunte;
@@ -80,7 +82,9 @@ public class MainActivity2 extends AppCompatActivity implements View.OnClickList
             @Override // Un toque largo
             public void onLongClick(View view, int position) {
                 id = listaApunte.get(position).getIdApunte();
-
+                eliminarApunte=new EliminarApunte();
+                eliminarApunte.setCancelable(false);
+                eliminarApunte.show(getSupportFragmentManager(),"Eliminar");
                 Toast.makeText(MainActivity2.this, "toque largo"+id, Toast.LENGTH_SHORT).show();
             }
         }));
@@ -110,6 +114,37 @@ public class MainActivity2 extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onDialogoCancelarListener() {
+
+    }
+
+    @Override
+    public void onDataSetEliminarApunte(boolean seguro) {
+        this.seguro=seguro;
+        if(seguro)
+        {
+
+                String idbaja = "" + id;
+                bajaApunteRemota = new BajaApunteRemota(idbaja);
+                bajaApunteRemota.execute();
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            consultaApunteRemota = new ConsultaApunteRemota(idCuadernoFK);
+            consultaApunteRemota.execute();
+            listaApunte = consultaApunteRemota.getLista();
+            Toast.makeText(this, "apuntes" + consultaApunteRemota.getLista().size(), Toast.LENGTH_SHORT).show();
+
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            apunteAdapter = new ApunteAdapter(consultaApunteRemota.getLista());
+            recyclerView2.setAdapter(apunteAdapter);
+
+        }
 
     }
 
