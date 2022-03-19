@@ -18,7 +18,7 @@ import java.util.List;
 import es.studium.bitacoraapp.Modelo.Apunte;
 import es.studium.bitacoraapp.Modelo.Cuaderno;
 
-public class MainActivity2 extends AppCompatActivity implements View.OnClickListener,DialogoEliminarApunte, DialogoEliminarCuaderno,DialogoAltaApunte {
+public class MainActivity2 extends AppCompatActivity implements View.OnClickListener,DialogoModificarApunte,DialogoEliminarApunte, DialogoEliminarCuaderno,DialogoAltaApunte {
     int idCuadernoFK;
     Button borrarCuaderno;
     FloatingActionButton boton;
@@ -29,11 +29,13 @@ public class MainActivity2 extends AppCompatActivity implements View.OnClickList
     BajaCuadernoRemota bajaCuadernoRemota;
     AltaApunteRemota altaApunteRemota;
     BajaApunteRemota bajaApunteRemota;
+    ModificacionApunteRemota modificacionApunteRemota;
     List<Apunte> listaApunte;
     Boolean seguro;
     EliminarCuaderno eliminarCuaderno;
     AgregarApunte agregarApunte;
     EliminarApunte eliminarApunte;
+    ModificarApunte modificarApunte;
     int id;
     String textoApunte;
     String fechaApunte;
@@ -75,6 +77,10 @@ public class MainActivity2 extends AppCompatActivity implements View.OnClickList
             public void onClick(View view, int position) {
                 // Pasar a la actividad Main2.java
                 id = listaApunte.get(position).getIdApunte();
+                modificarApunte=new ModificarApunte();
+                modificarApunte.setCancelable(false);
+                modificarApunte.show(getSupportFragmentManager(),"Modificar");
+
                 Toast.makeText(MainActivity2.this, "toque corto"+id, Toast.LENGTH_SHORT).show();
 
 
@@ -115,6 +121,34 @@ public class MainActivity2 extends AppCompatActivity implements View.OnClickList
     @Override
     public void onDialogoCancelarListener() {
 
+    }
+
+    @Override
+    public void onDataSetModificarApunte(String fechaApunte, String textoApunte) {
+        this.fechaApunte=fechaApunte;
+        this.textoApunte=textoApunte;
+
+        String id1 = "" + id;
+        String id2=""+idCuadernoFK;
+        modificacionApunteRemota=new ModificacionApunteRemota(id1,fechaApunte,textoApunte,id2);
+        modificacionApunteRemota.execute();
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        consultaApunteRemota = new ConsultaApunteRemota(idCuadernoFK);
+        consultaApunteRemota.execute();
+        listaApunte = consultaApunteRemota.getLista();
+        Toast.makeText(this, "apuntes" + consultaApunteRemota.getLista().size(), Toast.LENGTH_SHORT).show();
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        apunteAdapter = new ApunteAdapter(consultaApunteRemota.getLista());
+        recyclerView2.setAdapter(apunteAdapter);
     }
 
     @Override
